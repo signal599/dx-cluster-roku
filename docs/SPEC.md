@@ -383,14 +383,14 @@ Expected shape, so the Roku app is ready for it:
 
 ## 10. Milestones
 
-| # | Milestone | Done when |
-|---|-----------|-----------|
-| M0 | Toolchain | `app/` skeleton with manifest, icons, empty scene; `.gitignore` and `.env.example`; `deploy.sh` injects `config.json` and installs; debug console logs the loaded config. |
-| M1 | Glass teletype | TerminalView with the monospaced font, fed by a Timer that adds a fake spot line every second; it scrolls correctly and the columns line up. |
-| M2 | Socket task | ClusterTask connects to `fake-node.js`, logs in, and lines appear on screen. |
-| M3 | Real node | Connects to `nc7j.com:7300`, logs in as KT1F, displays the live stream. |
-| M4 | Robustness | IAC/control-character stripping verified with the fake node; reconnect with backoff; status line and UTC clock; runs overnight without problems. |
-| M5 | Relay-ready | `raw` mode tested against a fake relay by switching `CLUSTER_MODE`/`CLUSTER_HOST` in `.env`. |
+| # | Milestone | Done when | Status |
+|---|-----------|-----------|--------|
+| M0 | Toolchain | `app/` skeleton with manifest, icons, empty scene; `.gitignore` and `.env.example`; `deploy.sh` injects `config.json` and installs; debug console logs the loaded config. | Done (4f6e27b) |
+| M1 | Glass teletype | TerminalView with the monospaced font, fed by a Timer that adds a fake spot line every second; it scrolls correctly and the columns line up. | Done (1ad349b) |
+| M2 | Socket task | ClusterTask connects to `fake-node.js`, logs in, and lines appear on screen. | Done (f9d0e36) |
+| M3 | Real node | Connects to `nc7j.com:7300`, logs in as KT1F, displays the live stream. | Done (2026-10-04) |
+| M4 | Robustness | IAC/control-character stripping verified with the fake node; reconnect with backoff; status line and UTC clock; runs overnight without problems. | |
+| M5 | Relay-ready | `raw` mode tested against a fake relay by switching `CLUSTER_MODE`/`CLUSTER_HOST` in `.env`. | |
 
 ## 11. Future enhancements (backlog)
 
