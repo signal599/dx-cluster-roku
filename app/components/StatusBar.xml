@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One inverted line: connection status on the left, UTC clock on the right. -->
+<component name="StatusBar" extends="Group">
+    <interface>
+        <field id="text" type="string" onChange="redraw" />
+        <function name="setup" />
+    </interface>
+
+    <script type="text/brightscript" uri="StatusBar.brs" />
+    <script type="text/brightscript" uri="pkg:/source/text.brs" />
+
+    <children>
+        <Rectangle id="bar" />
+        <Label id="label" />
+        <Timer id="clock" repeat="true" duration="1" />
+    </children>
+</component>

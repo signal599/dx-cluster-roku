@@ -95,13 +95,15 @@ Protocol details that matter:
 
 ### 4.3 Status line
 
-One line, visually separate from the scrolling area (top or bottom, different
-colour), showing:
+One line across the top, above the terminal: black text on a dim green bar,
+in the same font and columns as the terminal. It shows:
 
-- Connection state: `Connecting`, `Connected`, `Disconnected — retrying in Ns`,
-  `Error: <message>`.
-- Host and port.
-- Current UTC time (`HHMMZ`), since spot times are in UTC.
+- Left: the connection state, e.g. `Connecting to nc7j.com:7300`,
+  `Connected to nc7j.com:7300`, or
+  `Disconnected (closed by the node) - retrying in 7s` (counting down).
+- Right: the current UTC time (`HHMMZ`), since spot times are in UTC.
+
+The terminal gives up one row (plus a small gap) for it.
 
 ### 4.4 Remote control
 

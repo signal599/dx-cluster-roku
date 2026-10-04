@@ -7,10 +7,10 @@ sub init()
     m.columns = 80
 end sub
 
-' params: { width, height, columns, color, fontUri }
-' Picks the largest font size that fits `columns` characters across `width`,
-' then creates as many rows as fit in `height`.
-function setup(params as object) as object
+' params: { width, columns, fontUri }
+' Picks the largest font size that fits `columns` characters across `width`.
+' Returns { font, width, lineHeight } so other components can share the font.
+function fitFont(params as object) as object
     m.columns = params.columns
     font = CreateObject("roSGNode", "Font")
     font.uri = params.fontUri
@@ -24,17 +24,25 @@ function setup(params as object) as object
         metrics = measure(font, m.columns)
     end while
 
-    rowCount = Int(params.height / metrics.height)
+    m.font = font
+    m.lineHeight = metrics.height
+    print "[DX] terminal: font size "; font.size; ", "; m.columns; " columns ("; metrics.width; " x "; metrics.height; " px per line)"
+    return { font: font, width: metrics.width, lineHeight: metrics.height }
+end function
+
+' params: { height, color }. Call after fitFont(); creates as many rows as fit.
+function setup(params as object) as object
+    rowCount = Int(params.height / m.lineHeight)
     for i = 0 to rowCount - 1
         label = m.top.createChild("Label")
-        label.font = font
+        label.font = m.font
         label.color = params.color
-        label.translation = [0, i * metrics.height]
+        label.translation = [0, i * m.lineHeight]
         m.rows.push(label)
     end for
 
-    print "[DX] terminal: font size "; font.size; ", "; m.columns; " x "; rowCount; " ("; metrics.width; " x "; metrics.height; " px per line)"
-    return { columns: m.columns, rows: rowCount, fontSize: font.size }
+    print "[DX] terminal: "; m.columns; " x "; rowCount
+    return { columns: m.columns, rows: rowCount }
 end function
 
 ' Size of one line of `columns` characters in `font`.

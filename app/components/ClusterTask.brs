@@ -6,24 +6,26 @@ sub run()
     target = m.top.host + ":" + m.top.port.ToStr()
     backoff = 5
     while true
-        connectedSeconds = runSession(target)
-        if connectedSeconds > 60 then backoff = 5
-        setStatus("disconnected", "Disconnected - retrying in " + backoff.ToStr() + "s")
-        sleep(backoff * 1000)
+        session = runSession(target)
+        if session.seconds > 60 then backoff = 5
+        for remaining = backoff to 1 step -1
+            setStatus(session.status, session.reason + " - retrying in " + remaining.ToStr() + "s")
+            sleep(1000)
+        end for
         backoff = backoff * 2
         if backoff > 60 then backoff = 60
     end while
 end sub
 
-' One connection, from connect to close. Returns how many seconds it stayed connected.
-function runSession(target as string) as integer
+' One connection, from connect to close.
+' Returns { seconds, status, reason }: how long it stayed connected and why it ended.
+function runSession(target as string) as object
     setStatus("connecting", "Connecting to " + target)
 
     address = CreateObject("roSocketAddress")
     if not address.setAddress(target) or not address.isAddressValid() then
-        setStatus("error", "Cannot resolve " + target)
         m.top.lines = ["*** Cannot resolve " + target + " ***"]
-        return 0
+        return { seconds: 0, status: "error", reason: "Cannot resolve " + target }
     end if
 
     port = CreateObject("roMessagePort")
@@ -32,10 +34,9 @@ function runSession(target as string) as integer
     socket.setSendToAddress(address)
     socket.setKeepAlive(true)
     if not socket.connect() then
-        setStatus("error", "Cannot connect to " + target)
         m.top.lines = ["*** Cannot connect to " + target + " ***"]
         socket.close()
-        return 0
+        return { seconds: 0, status: "error", reason: "Cannot connect to " + target }
     end if
     socket.notifyReadable(true)
 
@@ -58,7 +59,7 @@ function runSession(target as string) as integer
         if type(msg) = "roSocketEvent" and socket.isReadable() then
             count = socket.receive(buffer, 0, 4096)
             if count = 0 then
-                reason = "closed by remote"
+                reason = "closed by the node"
             else if count < 0 or not socket.eOK() then
                 reason = "socket error " + socket.status().ToStr()
             else
@@ -88,10 +89,10 @@ function runSession(target as string) as integer
     lines = []
     leftover = decoder.takePartial()
     if leftover <> "" then lines.push(leftover)
-    lines.push("*** Disconnected from " + target + " ***")
+    lines.push("*** Disconnected from " + target + " (" + reason + ") ***")
     m.top.lines = lines
     m.top.partial = ""
-    return seconds
+    return { seconds: seconds, status: "disconnected", reason: "Disconnected (" + reason + ")" }
 end function
 
 sub setStatus(status as string, text as string)
