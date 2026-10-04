@@ -16,21 +16,34 @@ sub init()
         print "[DX] config error: "; config.error
         m.terminal.callFunc("appendLines", ["*** Error: " + config.error + " ***"])
     else
-        summary = config.host + ":" + config.port.ToStr() + "  mode=" + config.mode + "  callsign=" + config.callsign
-        print "[DX] config loaded: "; summary
-        m.terminal.callFunc("appendLines", ["*** DX Cluster (M1, fake feed) - " + summary + " ***"])
+        print "[DX] config loaded: "; config.host; ":"; config.port; " mode="; config.mode; " callsign="; config.callsign
+        startCluster(config)
     end if
-
-    ' M1: fake traffic until the socket task exists.
-    m.tick = 0
-    m.fakeTimer = m.top.findNode("fakeTimer")
-    m.fakeTimer.observeField("fire", "onFakeTimer")
-    m.fakeTimer.control = "start"
 
     m.top.setFocus(true)
 end sub
 
-sub onFakeTimer()
-    m.tick = m.tick + 1
-    m.terminal.callFunc("appendLines", fakeFeedLines(m.tick))
+sub startCluster(config as object)
+    m.cluster = CreateObject("roSGNode", "ClusterTask")
+    m.cluster.host = config.host
+    m.cluster.port = config.port
+    m.cluster.callsign = config.callsign
+    m.cluster.mode = config.mode
+    m.cluster.observeField("lines", "onClusterLines")
+    m.cluster.observeField("partial", "onClusterPartial")
+    m.cluster.observeField("statusText", "onClusterStatus")
+    m.cluster.control = "RUN"
+end sub
+
+sub onClusterLines(event as object)
+    m.terminal.callFunc("appendLines", event.getData())
+end sub
+
+sub onClusterPartial(event as object)
+    m.terminal.partial = event.getData()
+end sub
+
+' The status line arrives in M4; log it for now.
+sub onClusterStatus(event as object)
+    print "[DX] status: "; event.getData()
 end sub

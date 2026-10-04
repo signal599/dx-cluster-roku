@@ -114,7 +114,7 @@ colour), showing:
 | ID | Requirement |
 |----|-------------|
 | F1 | Open a TCP connection to the configured host and port. |
-| F2 | In `telnet-login` mode, when `login:` is seen in the incoming buffer, send `<callsign>\r\n` once per connection. |
+| F2 | In `telnet-login` mode, when `login:` is seen in the incoming buffer, send `<callsign>\r\n` once per connection. The server does not echo, so complete the prompt line locally as `login: <callsign>`, as telnet does. |
 | F3 | In `raw` mode (for the future relay), send nothing and just display what arrives. |
 | F4 | Split the incoming bytes into lines, removing telnet IAC sequences and control characters. |
 | F5 | Display every complete line. Show the pending partial line (e.g. `login: `) as the bottom line until it is completed. |

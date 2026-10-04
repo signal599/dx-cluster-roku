@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Connects to the cluster, logs in, and streams decoded lines. Reconnects with backoff. -->
+<component name="ClusterTask" extends="Task">
+    <interface>
+        <!-- Inputs: set before control = "RUN" -->
+        <field id="host" type="string" />
+        <field id="port" type="integer" />
+        <field id="callsign" type="string" />
+        <field id="mode" type="string" value="telnet-login" />
+
+        <!-- Outputs -->
+        <field id="lines" type="array" alwaysNotify="true" />
+        <field id="partial" type="string" />
+        <field id="status" type="string" />
+        <field id="statusText" type="string" />
+    </interface>
+
+    <script type="text/brightscript" uri="ClusterTask.brs" />
+    <script type="text/brightscript" uri="TelnetDecoder.brs" />
+</component>

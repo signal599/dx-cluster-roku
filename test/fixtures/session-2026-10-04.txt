@@ -1,0 +1,69 @@
++---------------------------------------------------------------------+
+!  You have connected to the NG7M-1 DXCluster system running DXSpider !
++---------------------------------------------------------------------+
+!   If you are getting echo and you don't want it, do: unset/echo     +
+!  or (if you are a Microsoft telnet user) disable 'local echoing'    +
++---------------------------------------------------------------------+
+!          Warning: This system may only be accessed by Radio         !
+!  Amateurs using their real callsigns and in accordance with their   !
+!    jurisdiction's licensing conditions. All connections to this     !
+!                        system are recorded.                         !
++---------------------------------------------------------------------+
+login: 
+Hello KT1F, this is NG7M-1 in Syracuse,Utah
+running DXSpider V1.57 build 686
+Capabilities: ve7cc rbn
+----------------------------------------------------------------------------
+             NG7M-1 DX Spider DX Cluster Node Syracuse Utah
+----------------------------------------------------------------------------
+  User manual: https://wiki.dxcluster.org/wiki/DXSpider_User_Manual
+User commands: https://wiki.dxcluster.org/wiki/DXSpider_Filtering_Manual
+----------------------------------------------------------------------------
+The following commands and filter examples persist by login callsign and
+SSID after they are set:
+-
+ Enable RBN spots enter: set/wantrbn
+Disable RBN spots enter: unset/wantrbn
+ Show US States in spot: set/usstate
+----------------------------------------------------------------------------
+Filter example to show spots outside USA(K) and Canada(VE), and only show spots
+originating from USA(K) and Canada(VE):
+-
+For human spot filtering:
+accept/spots by_dxcc k,ve
+reject/spots dxcc k,ve
+-
+For RBN spot filtering:
+accept/rbn by_dxcc k,ve
+reject/rbn dxcc k,ve
+----------------------------------------------------------------------------
+Clear all filters: clear/spots all
+----------------------------------------------------------------------------
+Power Users, (reference the manual links above for your filter needs).
+For spot sending privileges, email NG7M for callsign / SSID registration
+----------------------------------------------------------------------------
+Sysop: Max NG7M Syracuse Utah ng7m@arrl.net
+Nodes: 5/437 Users [Loc/Clr]: 72/4841 Max: 92/6895 - Uptime:  7d 48m
+Please enter your name, set/name <your name>
+Please enter your QTH, set/qth <your qth>
+Please enter your location with set/location or set/qra
+Please enter your Home Node, set/homenode <your home DX Cluster>
+KT1F de NG7M-1  4-Oct-2026 2141Z dxspider >
+DX de K7GS:      14004.0  C5R          op2                            2141Z
+DX de VE3BR:     14051.9  W6SC         CW                             2141Z
+DX de N5YS:      14225.0  N6O          CA QSO Party: Contra Costa     2141Z
+DX de LU5WA:      7018.0  ZZ2T         qrs test                       2142Z
+DX de PY1KO:     14023.0  TK4TH        CW                             2142Z
+DX de W6NJB:     14259.6  W6AW         CA QSO Party: Yolo             2142Z
+DX de VE3BR:     14036.3  W6XU         CW                             2142Z
+DX de WW5L:      14047.6  N6W          CW                             2142Z
+DX de LU6DOT:    14004.0  C5R          Tnx,73 Gl                      2143Z
+DX de KF8GG:     14307.0  TT1GD        59 NE OH UP 5                  2143Z
+DX de W7CEJ:     18100.0  W7DRC        FT8 St George Marathon SES     2143Z
+DX de TK4TH:     14023.0  PY1KO                                       2143Z
+DX de PY1KO:     14023.0  TK4TH        QSB QSB BRASIL CW              2143Z
+DX de N4JN:      14032.7  W6COW                                       2144Z
+DX de F4BJN:     14075.9  AF8C         FT8 -13 Thx for qso 73         2144Z
+DX de AD6E:      14058.5  N6LL         tula                           2144Z
+DX de W6NJB:     14294.0  N6K          CA QSO Party: San Luis Obispo  2144Z
+DX de W8RKW:     28395.0  LW3DG        USB                            2144Z
