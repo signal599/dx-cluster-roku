@@ -3,9 +3,13 @@
     <script type="text/brightscript" uri="MainScene.brs" />
     <script type="text/brightscript" uri="pkg:/source/config.brs" />
     <script type="text/brightscript" uri="pkg:/source/theme.brs" />
+    <script type="text/brightscript" uri="pkg:/source/text.brs" />
+    <script type="text/brightscript" uri="pkg:/source/fakefeed.brs" />
 
     <children>
         <Rectangle id="background" width="1920" height="1080" />
-        <Label id="message" translation="[96, 54]" width="1728" wrap="true" font="font:MediumSystemFont" />
+        <!-- FHD action-safe area: 90% of the screen -->
+        <TerminalView id="terminal" translation="[96, 54]" />
+        <Timer id="fakeTimer" repeat="true" duration="1" />
     </children>
 </component>

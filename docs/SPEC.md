@@ -84,10 +84,13 @@ Protocol details that matter:
   become a user setting later. The status line uses a dimmer or inverted green
   to set it apart.
 - Monospaced font, sized for **80 columns** across a 1920-pixel-wide FHD
-  layout, inside the title-safe area. That works out to roughly 30–35 visible
-  lines.
+  layout, inside the action-safe area (1728 × 972 px). The font size is
+  chosen at runtime to fit 80 columns; on the dev Roku that is size 36,
+  giving 80 × 19.
 - New lines are added at the bottom; the oldest line drops off the top.
-- Lines longer than 80 columns are truncated in v1 (wrapping can come later).
+- Lines longer than 80 columns wrap at the last space that fits; a word
+  longer than 80 characters is split. The partial (unterminated) line is
+  truncated instead of wrapped.
 - Scrolling is instant (no animation) in v1.
 
 ### 4.3 Status line
@@ -399,7 +402,6 @@ Expected shape, so the Roku app is ready for it:
   registry.
 - Scrollback with the Up/Down keys; pause with OK.
 - Send DXSpider commands on login (`set/wantrbn`, filters) from configuration.
-- Line wrapping instead of truncation.
 - Channel Store release (needs the relay, privacy/terms review, and Roku
   certification requirements such as deep linking and screensaver behaviour).
 
@@ -409,8 +411,8 @@ Expected shape, so the Roku app is ready for it:
 
 1. **Field-update throughput.** Check that batching lines per read (§7.3)
    keeps up during contest-weekend spot bursts.
-2. **Font sizing.** Choose a point size that gives 80 columns legibly at FHD,
-   and check readability on a 720p device.
+2. **Font sizing on 720p.** FHD is settled (size 36, 80 × 19); check
+   readability on a 720p device.
 3. **Partial-line display.** Showing the unterminated `login:` prompt is
    faithful to telnet but optional. Keep it or drop it?
 

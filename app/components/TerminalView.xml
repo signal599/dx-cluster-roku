@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Glass-teletype text area. Call setup() once, then appendLines(). -->
+<component name="TerminalView" extends="Group">
+    <interface>
+        <!-- Unterminated text (e.g. "login: ") shown on the bottom row -->
+        <field id="partial" type="string" onChange="redraw" />
+        <function name="setup" />
+        <function name="appendLines" />
+    </interface>
+
+    <script type="text/brightscript" uri="TerminalView.brs" />
+    <script type="text/brightscript" uri="pkg:/source/text.brs" />
+</component>
