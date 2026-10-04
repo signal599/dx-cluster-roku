@@ -286,7 +286,8 @@ dx-cluster/
 │   ├── manifest
 │   ├── source/
 │   │   ├── main.brs
-│   │   └── config.brs          # loads pkg:/config.json
+│   │   ├── config.brs          # loads pkg:/config.json
+│   │   └── theme.brs           # colour constants
 │   ├── components/
 │   │   ├── MainScene.xml / .brs
 │   │   ├── TerminalView.xml / .brs
@@ -295,11 +296,12 @@ dx-cluster/
 │   ├── fonts/
 │   │   ├── <Mono>-Regular.ttf
 │   │   └── OFL.txt (or the font's licence)
-│   └── images/                 # channel icons + splash
+│   └── images/                 # channel icons + splash (generated)
 ├── build/                      # git-ignored staging dir (app/ + config.json)
 ├── out/                        # git-ignored built zip
 ├── tools/
 │   ├── deploy.sh               # stage, inject config, zip, install on the dev Roku
+│   ├── make-images.py          # generates app/images/ (no dependencies)
 │   └── fake-node.js            # local test server (see below)
 └── test/
     └── fixtures/session-2026-10-04.txt   # the captured telnet session
@@ -312,15 +314,20 @@ title=DX Cluster
 major_version=0
 minor_version=1
 build_version=1
+rsg_version=1.3
 ui_resolutions=fhd
 mm_icon_focus_hd=pkg:/images/icon_hd.png
 mm_icon_focus_fhd=pkg:/images/icon_fhd.png
-splash_screen_fhd=pkg:/images/splash_fhd.jpg
+splash_screen_sd=pkg:/images/splash_sd.png
+splash_screen_hd=pkg:/images/splash_hd.png
+splash_screen_fhd=pkg:/images/splash_fhd.png
 splash_color=#000000
 splash_min_time=500
 ```
 
-Check the current required icon and splash sizes in the Roku docs.
+Image sizes: icons 290×218 (HD) and 540×405 (FHD); splash screens 720×480
+(SD), 1280×720 (HD) and 1920×1080 (FHD). Roku requires `rsg_version=1.3` for
+certification from 1 October 2026.
 
 ### 8.2 Deploy script
 

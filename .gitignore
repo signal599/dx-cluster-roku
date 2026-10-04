@@ -1,0 +1,8 @@
+# Local settings: cluster login and dev Roku password
+.env
+
+# Build output
+build/
+out/
+
+.DS_Store

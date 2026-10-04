@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MainScene" extends="Scene">
+    <script type="text/brightscript" uri="MainScene.brs" />
+    <script type="text/brightscript" uri="pkg:/source/config.brs" />
+    <script type="text/brightscript" uri="pkg:/source/theme.brs" />
+
+    <children>
+        <Rectangle id="background" width="1920" height="1080" />
+        <Label id="message" translation="[96, 54]" width="1728" wrap="true" font="font:MediumSystemFont" />
+    </children>
+</component>
