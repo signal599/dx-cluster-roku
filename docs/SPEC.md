@@ -391,7 +391,7 @@ Expected shape, so the Roku app is ready for it:
 | M1 | Glass teletype | TerminalView with the monospaced font, fed by a Timer that adds a fake spot line every second; it scrolls correctly and the columns line up. | Done (1ad349b) |
 | M2 | Socket task | ClusterTask connects to `fake-node.js`, logs in, and lines appear on screen. | Done (f9d0e36) |
 | M3 | Real node | Connects to `nc7j.com:7300`, logs in as KT1F, displays the live stream. | Done (2026-10-04) |
-| M4 | Robustness | IAC/control-character stripping verified with the fake node; reconnect with backoff; status line and UTC clock; runs overnight without problems. | |
+| M4 | Robustness | IAC/control-character stripping verified with the fake node; reconnect with backoff; status line and UTC clock; runs overnight without problems. |Done (c4dc817), except unattended running: the OS exits the app when idle (§12). |
 | M5 | Relay-ready | `raw` mode tested against a fake relay by switching `CLUSTER_MODE`/`CLUSTER_HOST` in `.env`. | |
 
 ## 11. Future enhancements (backlog)
@@ -420,9 +420,23 @@ Expected shape, so the Roku app is ready for it:
 
 ### Deferred / decided (2026-10-04)
 
-- **Screensaver / idle sleep:** deferred. A passive, non-video app may trigger
-  the Roku screensaver or power-saving standby. Do nothing now; look into it
-  if it turns out to be a problem in use.
+- **Screensaver / idle exit:** confirmed as a problem; deferred until the relay
+  works. Findings from long runs against the live node (6-7 Oct 2026):
+  - Roku OS closes the app itself. The debug console shows
+    `EXIT_IDLE_AUTO_EXIT`, and there is never a `[DX] disconnected` line, so
+    this is not a network drop or a crash.
+  - The three logged exits came 2 h 20 m, 6 h 00 m and 8 h 10 m after launch,
+    each within 0.2 s of an exact 10-minute mark. That suggests a periodic
+    OS idle check; what makes it decide the app is idle is not yet known.
+  - The screensaver comes on, but the app keeps running behind it: after
+    dismissing it the screen catches up with a quick scroll.
+  - Power-save standby also came on later; it is now disabled on the dev
+    device.
+
+  Ideas to explore: find out what resets the OS idle timer and whether an app
+  can do it; a small moving graphic; offering the display as a Roku
+  screensaver (a channel can provide one); a "keep awake" option on the future
+  settings screen.
 - **Idle disconnects / keepalive:** deferred to the relay project. v1 relies
   on the reconnect-with-backoff logic (F7) if a connection is dropped.
 - **Colour scheme:** decided: green on black (§4.2). Other schemes are a
