@@ -33,7 +33,7 @@ This is a hobby project and a way to re-learn current Roku development
 - Settings screens or any on-screen input.
 - Parsing spots into structured data, colouring, filtering, sorting.
 - Publishing to the Roku Channel Store.
-- The relay server (separate project, see §9).
+- The relay server (separate project and repository, see §9).
 
 ## 3. Background: what the cluster sends
 
@@ -117,7 +117,7 @@ The terminal gives up one row (plus a small gap) for it.
 |----|-------------|
 | F1 | Open a TCP connection to the configured host and port. |
 | F2 | In `telnet-login` mode, when `login:` is seen in the incoming buffer, send `<callsign>\r\n` once per connection. The server does not echo, so complete the prompt line locally as `login: <callsign>`, as telnet does. |
-| F3 | In `raw` mode (for the future relay), send nothing and just display what arrives. |
+| F3 | In `raw` mode, send nothing and just display what arrives. (The relay will use a `relay` mode that authenticates first; see §9.3.) |
 | F4 | Split the incoming bytes into lines, removing telnet IAC sequences and control characters. |
 | F5 | Display every complete line. Show the pending partial line (e.g. `login: `) as the bottom line until it is completed. |
 | F6 | Keep a scrollback buffer of the last N lines (N = visible rows; a larger buffer is optional in v1). |
@@ -366,22 +366,60 @@ The debug console is reached with `telnet $ROKU_IP 8085`.
 Point the app at the Mac's LAN IP to test reconnect and decoding without
 loading the real node. This also gives the relay project a head start.
 
-## 9. Future: relay server (separate project)
+## 9. Relay server (separate project)
 
-Expected shape, so the Roku app is ready for it:
+The relay is its own project and GitHub repository. Its spec and the wire
+protocol document live there; this section records what was decided on
+2026-10-11 and what the Roku app must do to match.
 
-- Node.js service holding **one** telnet session to the upstream node under the
-  owner's callsign, and fanning lines out to many Roku clients.
-- Easiest for the Roku app: the relay speaks plain TCP, one line per `\n`, with
-  no login. That is the `mode = "raw"` path, and no code changes are needed.
-- Possible additions: send the last N lines to a client when it connects
-  (so the screen fills straight away), a heartbeat line, and per-client
-  filtering.
-- Using HTTP/WebSocket instead would need a different transport in the Roku
-  app, so stay with raw TCP unless there is a reason to change.
-- The upstream node's rules ("Radio Amateurs using their real callsigns") will
-  affect how a public relay identifies itself and its users. Decide this
-  before releasing to others.
+### 9.1 Decisions
+
+- **Purpose.** One upstream session to a cluster node, fanned out to many Roku
+  clients, so installed apps never log in to a node themselves.
+- **Language.** Node.js, using the built-in `net` module. `tools/fake-node.js`
+  and the test fixture in this repo are a starting point.
+- **Hosting.** The existing Hetzner VPS ("alpha"), run under pm2 as an
+  unprivileged user on a port above 1024.
+- **Transport.** Plain TCP, one line per `\n`, exposed directly on its own
+  port with that port opened in the firewall. Apache is not in front of it:
+  it proxies HTTP, not raw TCP, and an HTTP/WebSocket protocol would need a
+  new transport in the Roku app. The connection is unencrypted (Roku raw
+  sockets have no TLS, as far as we know), which is acceptable for public
+  spot data.
+- **Address.** A dedicated hostname (a subdomain) so the relay can move
+  without an app update. Port 7300, the cluster convention, unless there is a
+  reason to choose another.
+- **Authentication.** Shared secret with HMAC, as challenge-response so the
+  secret never crosses the wire: the relay sends a random nonce, the app
+  replies with the HMAC of it, the relay then streams or closes. This is a
+  deterrent, not real security: the secret can be extracted from the app.
+- **Abuse limits on the relay.** Strictly one-way (nothing a client sends is
+  ever forwarded upstream); caps on total clients and on connections per IP;
+  drop clients that do not authenticate within a few seconds.
+- **Upstream.** Configurable node. Log in with a separate SSID (e.g.
+  `KT1F-2`) so the relay's filters are separate from the owner's personal
+  ones; those filters are what every viewer sees.
+- **On connect.** The relay does not replay the node's banner or MOTD. It
+  sends its own short greeting and possibly the last few spots, so the screen
+  is not empty.
+
+### 9.2 Not yet decided
+
+- **Permission.** No node sysop has been asked yet. Preferred path: ask the
+  sysop of the upstream node (one read-only login, lower load than many
+  direct connections). Running our own DXSpider node is the alternative, but
+  it still needs links arranged with other sysops and is more to maintain.
+- **Exact protocol.** Greeting format, the HMAC message and encoding, any
+  heartbeat line, and how many recent spots to send. To be written in the
+  relay repo.
+
+### 9.3 Roku app changes needed
+
+- A `relay` connection mode: perform the challenge-response (Roku has a
+  built-in HMAC component), then display lines as in `raw` mode.
+- The shared secret comes from `.env` and is written into `config.json` at
+  build time, like the other cluster settings. It must never be committed.
+- `raw` mode stays, for testing against a plain line source.
 
 ## 10. Milestones
 
@@ -392,7 +430,7 @@ Expected shape, so the Roku app is ready for it:
 | M2 | Socket task | ClusterTask connects to `fake-node.js`, logs in, and lines appear on screen. | Done (f9d0e36) |
 | M3 | Real node | Connects to `nc7j.com:7300`, logs in as KT1F, displays the live stream. | Done (2026-10-04) |
 | M4 | Robustness | IAC/control-character stripping verified with the fake node; reconnect with backoff; status line and UTC clock; runs overnight without problems. |Done (c4dc817), except unattended running: the OS exits the app when idle (§12). |
-| M5 | Relay-ready | `raw` mode tested against a fake relay by switching `CLUSTER_MODE`/`CLUSTER_HOST` in `.env`. | |
+| M5 | Relay client | `relay` mode with HMAC challenge-response (§9.3), tested against the relay; settings switched in `.env`. Depends on the relay project's protocol document. | |
 
 ## 11. Future enhancements (backlog)
 
